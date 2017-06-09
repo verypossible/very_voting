@@ -1,0 +1,10 @@
+<%= if @current_user do %>
+  <h2>Welcome, <%= @current_user["name"] %>!</h2>
+  <%= link "Logout", to: auth_path(@conn, :delete), method: :delete, class: "btn btn-danger" %>
+<% else %>
+  <%= link to: auth_path(@conn, :index, "google"), class: "btn btn-primary" do %>
+    Sign in with Google
+  <% end %>
+<% end %>
+
+<div id="elm-target"></div>
