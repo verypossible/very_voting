@@ -35,13 +35,10 @@ nominationsListView model =
 
 nominationView : Model -> Nomination -> Html Msg
 nominationView model nomination =
-    let
-        event = chooseEvent model
-    in
-        form [ Events.onSubmit event ]
-            [ nominationOrInput model nomination
-            , nameOrEditButton model
-            ]
+    form [ chooseEvent model |> Events.onSubmit ]
+        [ nominationOrInput model nomination
+        , nameOrEditButton model
+        ]
 
 chooseEvent : Model -> Msg
 chooseEvent model =
