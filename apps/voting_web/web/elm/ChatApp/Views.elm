@@ -30,15 +30,43 @@ submitNominationView model =
 nominationsListView : Model -> Html Msg
 nominationsListView model =
     defaultLayout (p [] [ connectionMessage model.connectionMessage
-         ,div [] (List.map nominationView model.nominations)
+         ,div [] (List.map (nominationView model) model.nominations)
          ])
 
-nominationView : Nomination -> Html Msg
-nominationView nomination =
-    div []
-        [ span [] [ text nomination.nominee ]
-        , span [] [ text (" - " ++ nomination.nominatorName) ]
+nominationView : Model -> Nomination -> Html Msg
+nominationView model nomination =
+    form [ chooseEvent model |> Events.onSubmit ]
+        [ nominationOrInput model nomination
+        , nameOrEditButton model
         ]
+
+chooseEvent : Model -> Msg
+chooseEvent model =
+    if model.editing then
+        SaveNomination
+    else
+        StartEditing
+
+nominationOrInput : Model -> Nomination -> Html Msg
+nominationOrInput model nomination =
+    if model.editing && nomination.nominator == model.user.email then
+        input [ placeholder nomination.nominee, value model.nominee, Events.onInput ChangeNomination ] []
+    else
+        span [] [ text nomination.nominee ]
+
+nameOrEditButton : Model -> Html Msg
+nameOrEditButton model =
+    if model.nomination.nominator == model.user.email then
+        button [ ] [ text (editButtonText model) ]
+    else
+        span [] [ text (" - " ++ model.nomination.nominatorName) ]
+
+editButtonText : Model -> String
+editButtonText model =
+    if model.editing then
+        "Save"
+    else
+        "Change Nomination"
 
 connectionMessage : String -> Html Msg
 connectionMessage message =
@@ -48,4 +76,5 @@ defaultLayout : Html Msg -> Html Msg
 defaultLayout msg =
     div []
         [button [ Events.onClick ResetElection ] [ text "Reset" ]
-        , msg]
+        , msg
+        ]

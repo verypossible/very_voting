@@ -11,6 +11,7 @@ type alias Model =
     , nominee : String
     , view : ViewType
     , location : String
+    , editing : Bool
     }
 
 type alias User =
@@ -45,3 +46,4 @@ type Msg
     | Connected
     | ChangeNomination String
     | ResetElection
+    | StartEditing

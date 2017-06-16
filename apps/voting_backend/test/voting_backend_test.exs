@@ -22,10 +22,18 @@ defmodule VotingBackendTest do
     assert get_nomination("fail@test.com") == %{}
   end
 
-  test "save_nomination/1", _ do
+  test "save_nomination/1 new save", _ do
     nomination = %{"nominator" => "test2@test.com", "nominatorName" => "Test 2 User", "nominee" => "Test User"}
     save_nomination(nomination)
     assert length(get_nominations()) == 2
+  end
+
+  test "save_nomination/1 update", _ do
+    nomination = %{"nominator" => "test@test.com", "nominatorName" => "Test User", "nominee" => "Other User"}
+    save_nomination(nomination)
+    nominations = get_nominations()
+    assert length(nominations) == 1
+    assert List.first(nominations)["nominee"] == "Other User"
   end
 
   test "reset/0", _ do

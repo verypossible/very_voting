@@ -17,7 +17,7 @@ init flags =
         nomination =
             Nomination "" "" ""
     in
-        Model [] nomination user "Initializing" "" ErrorView flags.location ! [getUser]
+        Model [] nomination user "Initializing" "" ErrorView flags.location False ! [getUser]
 
 getUser : Cmd Msg
 getUser =
@@ -41,6 +41,8 @@ decodeUser =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        StartEditing ->
+            { model | editing = True } ! []
         GetNominations ->
             let
                 push =
@@ -59,13 +61,14 @@ update msg model =
 
         SaveNomination ->
             let
+                nomination = Nomination model.nominee model.user.email model.user.name
                 push =
                     Push.init "election:vote" "save_nomination"
-                        |> Push.withPayload (JE.object [ ( "nominee", JE.string model.nominee )
-                                                       , ("nominator", JE.string model.user.email)
-                                                       , ("nominatorName", JE.string model.user.name) ])
+                        |> Push.withPayload (JE.object [ ("nominee", JE.string nomination.nominee)
+                                                       , ("nominator", JE.string nomination.nominator)
+                                                       , ("nominatorName", JE.string nomination.nominatorName) ])
             in
-                { model | nominee = "", view = NominationListView } ! [ Phoenix.push (endPoint model) push ]
+                { model | nominee = "", nomination = nomination, editing = False, view = NominationListView } ! [ Phoenix.push (endPoint model) push ]
 
         ChangeNomination nominee ->
             { model | nominee = nominee } ! []
