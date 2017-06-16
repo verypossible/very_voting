@@ -4,14 +4,15 @@ defmodule VotingBackend do
   """
 
   def get_nominations do
-    VotingBackend.NominationProvider.get_nominations(:nomination_provider)
+    get_nominations_map()
+      |> Map.values()
   end
 
   def get_nomination(nominatorId) do
-    Enum.find(get_nominations(), %{}, fn(n) ->
-      {:ok, nominator} = Map.fetch(n, "nominator")
-       nominator == nominatorId
-    end)
+    case Map.fetch(get_nominations_map(), nominatorId) do
+      {:ok, nomination} -> nomination
+      :error -> %{}
+    end
   end
 
   def save_nomination(nomination) do
@@ -20,5 +21,9 @@ defmodule VotingBackend do
 
   def reset() do
     VotingBackend.NominationProvider.reset(:nomination_provider)
+  end
+
+  defp get_nominations_map do
+    VotingBackend.NominationProvider.get_nominations(:nomination_provider)
   end
 end
