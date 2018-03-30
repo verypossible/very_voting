@@ -20,11 +20,14 @@ defmodule VotingWeb.AuthControllerTest do
   test "GET /auth/get_user with user", %{conn: conn} do
     user = %{"email" => "test@test.com", "picture" => "no.jpg", "name" => "test"}
 
-    conn = conn
+    conn =
+      conn
       |> assign(:current_user, user)
       |> get("/auth/get_user")
 
-    assert %{"token" => token, "email" => email, "picture" => picture, "name" => name} = json_response(conn, 200)
+    assert %{"token" => token, "email" => email, "picture" => picture, "name" => name} =
+             json_response(conn, 200)
+
     assert email == user["email"]
     assert picture == user["picture"]
     assert name == user["name"]

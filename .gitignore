@@ -21,3 +21,6 @@ erl_crash.dump
 
 # Secrets
 .env
+
+# System files
+.DS_Store

@@ -5,7 +5,9 @@
 # is restricted to this project.
 use Mix.Config
 
+# General application configuration
 config :voting_web,
+  namespace: VotingWeb,
   oauth_client: System.get_env("OAUTH_CLIENT"),
   oauth_secret: System.get_env("OAUTH_SECRET")
 
@@ -14,8 +16,7 @@ config :voting_web, VotingWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "B04/TUi/Zu5AAZPFRtSHTnuuCPzSNoBDb9DpsJHezRmAnqwirU7S81RDlNSGgNfw",
   render_errors: [view: VotingWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: VotingWeb.PubSub,
-           adapter: Phoenix.PubSub.PG2]
+  pubsub: [name: VotingWeb.PubSub, adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger
 config :logger, :console,
@@ -24,4 +25,4 @@ config :logger, :console,
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
-import_config "#{Mix.env}.exs"
+import_config "#{Mix.env()}.exs"

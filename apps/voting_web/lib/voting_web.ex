@@ -1,29 +1,66 @@
 defmodule VotingWeb do
-  use Application
+  @moduledoc """
+  The entrypoint for defining your web interface, such
+  as controllers, views, channels and so on.
 
-  # See http://elixir-lang.org/docs/stable/elixir/Application.html
-  # for more information on OTP Applications
-  def start(_type, _args) do
-    import Supervisor.Spec
+  This can be used in your application as:
 
-    # Define workers and child supervisors to be supervised
-    children = [
-      # Start the endpoint when the application starts
-      supervisor(VotingWeb.Endpoint, []),
-      # Start your own worker by calling: VotingWeb.Worker.start_link(arg1, arg2, arg3)
-      # worker(VotingWeb.Worker, [arg1, arg2, arg3]),
-    ]
+      use KollerBackendWeb, :controller
+      use KollerBackendWeb, :view
 
-    # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
-    # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: VotingWeb.Supervisor]
-    Supervisor.start_link(children, opts)
+  The definitions below will be executed for every view,
+  controller, etc, so keep them short and clean, focused
+  on imports, uses and aliases.
+
+  Do NOT define functions inside the quoted expressions
+  below. Instead, define any helper function in modules
+  and import those modules here.
+  """
+
+  def controller do
+    quote do
+      use Phoenix.Controller, namespace: VotingWeb
+      import Plug.Conn
+      import VotingWeb.Router.Helpers
+      import VotingWeb.Gettext
+    end
   end
 
-  # Tell Phoenix to update the endpoint configuration
-  # whenever the application is updated.
-  def config_change(changed, _new, removed) do
-    VotingWeb.Endpoint.config_change(changed, removed)
-    :ok
+  def view do
+    quote do
+      use Phoenix.View, root: "lib/voting_web/templates", namespace: VotingWeb
+
+      # Import convenience functions from controllers
+      import Phoenix.Controller, only: [get_csrf_token: 0, get_flash: 2, view_module: 1]
+
+      # Use all HTML functionality (forms, tags, etc)
+      use Phoenix.HTML
+
+      import VotingWeb.Router.Helpers
+      import VotingWeb.ErrorHelpers
+      import VotingWeb.Gettext
+    end
+  end
+
+  def router do
+    quote do
+      use Phoenix.Router
+      import Plug.Conn
+      import Phoenix.Controller
+    end
+  end
+
+  def channel do
+    quote do
+      use Phoenix.Channel
+      import VotingWeb.Gettext
+    end
+  end
+
+  @doc """
+  When used, dispatch to the appropriate controller/view/etc.
+  """
+  defmacro __using__(which) when is_atom(which) do
+    apply(__MODULE__, which, [])
   end
 end
