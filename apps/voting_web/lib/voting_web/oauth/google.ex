@@ -38,6 +38,6 @@ defmodule Google do
   end
 
   defp redirect_uri() do
-    "http://6764f512.ngrok.io" <> "/auth/google/callback"
+    VotingWeb.Endpoint.url() <> "/auth/google/callback"
   end
 end
